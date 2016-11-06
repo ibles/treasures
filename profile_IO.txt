@@ -1,0 +1,64 @@
+#Terminal features
+#====================================================================#
+#export PS1="\h:\W\[\033[01;30m\]\$ "
+#PS1='${debian_chroot:+($debian_chroot)}\[\033[0;33m\]\u\[\033[00m\]:\[\033[01;30m\]\W\[\033[00m\]\$ '
+PS1='${debian_chroot:+($debian_chroot)}\[\033[0;33m\]\u\[\033[00m\]:\[\033[90m\]\W\[\e[0;31m\]\$\[\033[00m\]'
+#Green: 0;32, Red: 0;31, Blue: 0;34m, Grey: 1;30, Brown: 0;33
+export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxgxgxbxbxexex
+
+#New Aliases
+#====================================================================#
+alias goTreb='cd ~/Documents/TREBALLS/'
+alias goRoot_tut='cd /Users/ibles/Software/root-6.06.06/tutorials'
+alias goPhD='cd /Users/ibles/Documents/TREBALLS/PhD'
+alias goProj='cd /Users/ibles/Documents/TREBALLS/PhD/Projects'
+alias goCourses='cd /Users/ibles/Documents/TREBALLS/PhD/Courses'
+alias goLatex='cd /Users/ibles/Documents/TREBALLS/PhD/Computing/LATEX'
+alias goVimLat='cd ~/.vim/after/ftplugin/'
+alias goDisc='cd /Users/ibles/Documents/TREBALLS/PhD/CODES/TDRScience/PLR/WIMP'
+alias mvi='open -a /Applications/MacVim.app'
+alias vi='vim' #vi is mapped to an old version of vim
+alias root='root -l'
+alias garfroot='$GARFIELD_HOME/GarfRoot/garfroot'
+alias sshLX00='ssh -XY io913@lx00.hep.ph.ic.ac.uk'
+#alias sshLX02='ssh -XY io913@lx02.hep.ph.ic.ac.uk'
+alias sshPDSF='ssh -XY ibles@pdsf.nersc.gov'
+alias ll='ls -lthF'
+alias ls='ls -GFh'
+alias grep='grep --color=auto'
+alias trash='rmtrash'
+alias rm='rm -i'
+#alias rm='trash'
+alias dumptrash='rm -rf ~/.Trash/*'
+alias r5='source /usr/local/Cellar/root/HEAD/libexec/thisroot.sh'
+alias r6='source /Users/ibles/Software/root-6.06.06/BuildDir/bin/thisroot.sh'
+# Give write permissions to pdflatex
+alias pdflatex='pdflatex -shell-escape'
+
+#New variables
+#====================================================================#
+#export ROOTSYS="/usr/local/Cellar/root/HEAD"
+#export ROOTSYS="/Users/ibles/Software/root6"
+#export PATH="$ROOTSYS/bin:$PATH"
+#export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
+#export ROOTINC="$ROOTSYS/include"
+export GARFIELD_HOME="/Users/ibles/Programs/garfield"
+export HEED_DATABASE="$GARFIELD_HOME/Heed/heed++/database"
+
+#Do not touch these!
+export VIM="/usr/local/Cellar/vim/7.4.1063/share/vim"
+export LIBRARY_PATH="/usr/local/lib"
+#export DYLD_LIBRARY_PATH="../../lib:../lib:$ROOTSYS/lib/root:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="$ROOTSYS/lib:/opt/local/var/macports/software:../../lib:../lib:$DYLD_LIBRARY_PATH"
+export PYTHONPATH="/usr/local/Cellar/root/HEAD/lib/root/:usr/local/lib/python2.7/site-packages:/Users/ibles/Software/anaconda2:$PYTHONPATH"
+export NESTPATH="/Users/ibles/Documents/TREBALLS/PhD/Projects/fastNEST/libNEST"
+
+##
+# Your previous /Users/ibles/.profile file was backed up as /Users/ibles/.profile.macports-saved_2015-10-18_at_17:14:17
+##
+
+# MacPorts Installer addition on 2015-10-18_at_17:14:17: adding an appropriate PATH variable for use with MacPorts.
+export PATH="/Users/ibles/Software/anaconda2/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:$PATH"
+# Finished adapting your PATH environment variable for use with MacPorts.
+

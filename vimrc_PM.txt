@@ -1,0 +1,408 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+Plugin 'tpope/vim-fugitive'
+Plugin 'scrooloose/nerdtree'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'kien/ctrlp.vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'vim-latex/vim-latex'
+Plugin 'jpalardy/vim-slime'
+" Plugin 'klen/python-mode'
+" plugin from http://vim-scripts.org/vim/scripts.html
+" Plugin 'L9'
+" Git plugin not hosted on GitHub
+" Plugin 'git://git.wincent.com/command-t.git'
+" git repos on your local machine (i.e. when working on your own plugin)
+" Plugin 'file:///home/gmarik/path/to/plugin'
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+" Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+" Avoid a name conflict with L9
+" Plugin 'user/L9', {'name': 'newL9'}
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
+
+" Activate pathogen to load all other plugins
+" execute pathogen#infect()
+
+" General
+set number
+set incsearch
+syntax on
+set wildmenu
+set hlsearch
+set autoindent
+set ruler
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+set scrolloff=2
+
+" Remap map leader character
+let mapleader = ","
+
+" Colours and colour schemes
+colorscheme desert
+set background=dark
+
+" Tabs
+set shiftwidth=2
+set tabstop=2
+set expandtab
+vnoremap < <gv
+vnoremap > >gv
+
+" Count words in LaTeX document
+nmap <silent> <leader>lwc :w<CR> :!detex % \| wc -w<CR>
+
+" Enable mouse support
+if has('mouse')
+	set mouse=a
+endif
+
+" New lines and spaces without leaving normal mode
+nnoremap <C-K> O<Esc>
+nnoremap <C-J> o<Esc>
+nnoremap <C-H> i <Esc>
+nnoremap <C-L> a <Esc>
+
+" Use Ctrl+s to save file quickly
+nnoremap <C-S> :w<CR>
+vnoremap <C-S> <Esc>:w<CR>
+inoremap <C-S> <Esc>:w<CR>
+
+" Some useful shortcuts for insert mode
+inoremap <C-H> <Esc>bi
+inoremap <C-L> <Esc>wwi
+imap <C-BS> <C-W>
+
+" Add some emacs-like shortcuts
+inoremap <C-e> <Esc>A
+inoremap <C-a> <Esc>I
+
+" Multi-and single-line comments in TeX and Octave
+nnoremap % I% <Esc>
+vnoremap % :s/^/% <CR>:noh<CR>
+
+" Set scrollbind on/off quickly
+nnoremap <leader>s :set scb!<CR>
+
+" Scroll keeping the cursor in the same position in the screen
+nnoremap K <C-y>k
+nnoremap J <C-e>j
+
+" Settings for fugitive git plugin
+" Most copied from
+" https://www.reddit.com/r/vim/comments/21f4gm/best_workflow_when_using_fugitive/
+set diffopt+=vertical
+nnoremap <space>ga :Git add %:p<CR><CR>
+nnoremap <space>gs :Gstatus<CR>
+nnoremap <space>gc :Gcommit -v -q<CR>
+nnoremap <space>gt :Gcommit -v -q %:p<CR>
+nnoremap <space>gd :Gdiff<CR>
+nnoremap <space>ge :Gedit<CR>
+nnoremap <space>gr :Gread<CR>
+nnoremap <space>gw :Gwrite<CR><CR>
+" nnoremap <space>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <space>gl :bot copen<CR>:set modifiable<CR>:read !git lgnocolor<CR>ggdd:noh<CR>
+nnoremap <space>gp :Ggrep<Space>
+nnoremap <space>gm :Gmove<Space>
+nnoremap <space>gb :Git branch<Space>
+nnoremap <space>go :Git checkout<Space>
+nnoremap <space>gps :Dispatch! git push<CR>
+nnoremap <space>gpl :Dispatch! git pull<CR>
+noremap <space>o do:diffupdate<CR>
+noremap <space>p dp:diffupdate<CR>
+" noremap du :diffupdate<CR>
+" xnoremap dp :diffput<cr>
+" xnoremap do :diffget<cr>
+
+"
+" Remove item autoindentation in vim-latex
+let g:tex_indent_items=0
+
+" Ignore certain files with CtrlP
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|o|class)$',
+  \ }
+
+" Automagic pasting for the vimslime-ipython link
+let g:slime_python_ipython = 1
+
+" Reformat lines (getting the spacing correct) {{{
+function s:Goback()
+	exec "normal ".s:cursorline."G".s:cursorcol."|"
+endfunction
+
+" really go back (including the screen position)
+function s:ReallyGoback()
+    exec "normal ".s:topline."Gzt"
+	exec "normal ".s:cursorline."G".s:cursorcol."|"
+endfunction
+
+" Check whether this line can join the previous line
+function s:CanJoin(str)
+	if &filetype=='tex'
+		let checks=['\section', '\subsection', '\subsubsection', '\chapter', '\paragraph', '\clearpage', '\include', '\biblio', '\usepack', '\def', '\table', '\psfrag', '\thanks', '\label', '\document', '\listoffigures', '\DeclareMathOperator', '\begin', '\end', '\bi', '\ei']
+		" let checks=['\section', '\subsection', '\subsubsection', '\chapter', '\paragraph', '\clearpage', '\include', '\biblio', '\usepack', '\def', '\table', '\psfrag', '\thanks', '\label',  '\caption', '\document', '\listoffigures', '\DeclareMathOperator', '\begin', '\end', '\bi', '\ei']
+		let regex=join(checks, '\|')
+		let regex=substitute(regex, '\zs\\\ze[^|]', '^\\\\', 'g')
+		let regex.='\|^%\|^\s'
+	else
+		let regex='^\s'
+	endif
+		return (match(a:str, regex)==-1)
+endfunction
+
+" check if it is the start of a verbatim block (eg. equation)
+function s:BlockStart(str)
+	if &filetype=='tex'
+		let checks=['\[', '\begin{equation', '\begin{align', ]
+		let regex=join(checks, '\|')
+		let regex=substitute(regex, '\zs\\\ze[^|]', '^\\\\', 'g')
+		let regex=substitute(regex, '\(\[\|\]\)', '\\\1', 'g')
+		return match(a:str, regex)==0
+	else
+		return 0
+	endif
+endfunction
+
+" check if it is the end of a verbatim block (eg. equation)
+function s:BlockEnd(str)
+	if &filetype=='tex'
+		let checks=['\]', '\end{equation', '\end{align']
+		let regex=join(checks, '\|')
+		let regex=substitute(regex, '\zs\\\ze[^|]', '^\\\\', 'g')
+		let regex=substitute(regex, '\(\[\|\]\)', '\\\1', 'g')
+		return match(a:str, regex)==0
+	else
+		return 0
+	endif
+endfunction
+
+" Output str verbatimly, after finishing half-line business
+function s:Verbatim(str)
+		if s:halfline!=""
+			let s:newlines+=[s:halfline]
+		endif
+		let s:newlines+=[a:str]
+		let s:halfline=""
+endfunction
+
+" Format a single line
+function s:FormatLine(line)
+	if &textwidth>0
+		let s:textwidth=&textwidth
+	else
+		let s:textwidth=79
+		" let s:textwidth=80
+	endif
+
+	let str=getline(a:line)
+
+	if s:BlockStart(str)
+		let s:inblock=1
+		call s:Verbatim(str)
+		return
+	endif
+
+	if s:BlockEnd(str)
+		let s:inblock=0
+		call s:Verbatim(str)
+		return
+	endif
+
+	" empty line
+	if match(str, '^\s*$')>=0 
+		if s:prevempty==1
+			return	
+		else
+			call s:Verbatim("")
+			let s:prevempty=1
+			return
+		endif
+	else
+		let s:prevempty=0
+	endif
+
+	" in a block or cannot join previously
+	if s:inblock==1 || !s:CanJoin(str) 
+		call s:Verbatim(str)
+		return
+	endif 
+
+	" join with the previous line
+	let words = split(str, '\s\+')
+	for word in words
+		if s:halfline==""
+			let s:halfline=word
+		else 
+			if (strlen(word)+strlen(s:halfline)+1)>s:textwidth
+				let s:newlines+=[s:halfline]
+				let s:halfline=word
+			else
+				let s:halfline.= ' '.word
+			endif
+		endif
+	endfor
+endfunction
+
+" format a range of lines
+function s:FormatLines(startl, endl)
+
+	let s:newlines=[]
+	let s:halfline=""
+	let s:inblock=0
+	let s:prevempty=0
+
+	let index=a:startl
+	while index<=a:endl
+		call s:FormatLine(index)
+		let index+=1
+	endwhile
+
+	"flush the last half line if necessary
+	if s:halfline!=""
+		let s:newlines+=[s:halfline]
+	endif
+
+	"deal with the stupid/elusive vim undo cursor placement
+	" Do some change so that VIM will undo to this point
+	call s:Goback()
+	normal rx
+
+	" delete the old ones
+	exec ':'.a:startl.','.a:endl.'d'
+
+	" insert the new lines
+	call append(a:startl-1, s:newlines)
+endfunction
+
+" format a paragraph
+function s:FormatParagraph()
+	let s:cursorline=line(".")
+	let s:cursorcol=col(".")
+	let cursorchar=strpart(getline("."), col(".") - 1, 1)
+    normal! H
+    let s:topline = line(".")
+	call s:Goback()
+
+	normal }{
+	let startl=nextnonblank('.')
+	if startl>s:cursorline "we are on a blank line
+		call s:ReallyGoback()
+		return
+	endif
+	normal }
+	let endl=prevnonblank('.')
+	call s:Goback()
+
+	" compute logical position (num chars) relative to start of paragraph
+	let index=startl
+	let old_pos=0
+	while index < s:cursorline
+		let old_pos+=strlen(substitute(getline(index), '\s', '', 'g'))
+		let index+=1
+	endwhile
+	let old_pos+=strlen(substitute(strpart(getline(index),0,col('.')), '\s', '', 'g'))
+
+	" format 
+	call s:FormatLines(startl, endl)
+
+	" restore cursor position
+	exec ':'.startl
+	normal 0
+
+	if old_pos>1
+		call search('^\%(\_s*\S\)\{'.(old_pos).'}', 'e', endl+len(s:newlines))
+		if match(cursorchar, '\s')==0
+			call search('\_s', '', line('$'))
+		endif
+	endif
+
+	" restore screen position
+	let tmpline=line('.')
+	let tmpcol=col('.')
+    execute "normal! ".s:topline."Gzt"
+	exec "normal ".tmpline."G".tmpcol."|"
+endfunction
+
+" silent! unmap K 
+" nnoremap <silent><buffer> K :silent call <SID>FormatParagraph()<CR>
+
+nnoremap ,m :call <SID>FormatParagraph()<CR>
+nnoremap ,n gqap
+
+" }}}
+
+
+" " Python-mode shortcuts
+" " Activate rope
+" " Keys:
+" " K             Show python docs
+" " <Ctrl-Space>  Rope autocomplete
+" " <Ctrl-c>g     Rope goto definition
+" " <Ctrl-c>d     Rope show documentation
+" " <Ctrl-c>f     Rope find occurrences
+" " <Leader>b     Set, unset breakpoint (g:pymode_breakpoint enabled)
+" " [[            Jump on previous class or function (normal, visual, operator modes)
+" " ]]            Jump on next class or function (normal, visual, operator modes)
+" " [M            Jump on previous class or method (normal, visual, operator modes)
+" " ]M            Jump on next class or method (normal, visual, operator modes)
+" let g:pymode_rope = 1
+" 
+" " Documentation
+" let g:pymode_doc = 1
+" let g:pymode_doc_key = 'K'
+" 
+" "Linting
+" let g:pymode_lint = 1
+" let g:pymode_lint_checker = "pyflakes,pep8"
+" " Auto check on save
+" let g:pymode_lint_write = 1
+" 
+" " Support virtualenv
+" let g:pymode_virtualenv = 1
+" 
+" " Enable breakpoints plugin
+" let g:pymode_breakpoint = 1
+" let g:pymode_breakpoint_bind = '<leader>b'
+" 
+" " syntax highlighting
+" let g:pymode_syntax = 1
+" let g:pymode_syntax_all = 1
+" let g:pymode_syntax_indent_errors = g:pymode_syntax_all
+" let g:pymode_syntax_space_errors = g:pymode_syntax_all
+" 
+" " Don't autofold code
+" let g:pymode_folding = 0
+
+

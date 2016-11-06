@@ -1,0 +1,362 @@
+" ========================================================================== "
+" => Plugin Managers (this MUST be placed at the beginning)
+" (also: having two plugin managers, like Pathogen, leads to problems)
+" ========================================================================== "
+" VUNDLE
+" --------------------------------------- "
+" To install plugins: launch VIM and run :PluginInstall
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree'
+Plugin 'bling/vim-airline'
+Plugin 'restore_view.vim'
+Plugin 'jnurmine/Zenburn'
+Plugin 'joshdick/onedark.vim'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-git'
+Plugin 'easymotion/vim-easymotion'
+"Plugin 'klen/python-mode'
+call vundle#end()
+" -------------------------------------- "
+
+" ========================================================================== "
+" => General
+" ========================================================================== "
+" Enable filetype plugins
+filetype plugin on
+filetype indent on 
+
+" Automatically reload file if it is changed from the outside
+set autoread
+
+" Set a map leader
+let mapleader = ","
+set timeoutlen=500 " set time out for mapping delays to 0.1 ms
+set ttimeoutlen=0   " time out for key code delays
+
+" Automatic reloading of .vimrc
+autocmd! bufwritepost .vimrc source %
+
+" Disable automatic comment insertion
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" Return to last edit position when opening files
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\ |
+     \ endif
+
+" Remember info about open buffers on close
+set viminfo^=%
+
+" ========================================================================== "
+" => VIM user interface
+" ========================================================================== "
+" Show current position
+set ruler
+
+" Height of the command bar
+set cmdheight=1
+
+" Configure backspace so it acts as it should
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+"set backspace=2
+
+" Ignore case when searching
+"set ignorecase
+
+" Highlight search results
+set hlsearch
+"set incsearch
+
+" Show matching brackets when cursor is over them
+"set showmatch
+
+set viewoptions=cursor,folds,slash,unix 
+set number
+"set shiftround
+"set autoindent
+"set title
+
+" Display only file name on each tab
+set guitablabel=%t
+
+" Press Alt and click to select columns of text
+set mouse=a 
+
+"Mark column 80
+if has('gui_running')
+    set colorcolumn=80  
+    highlight ColorColumn ctermbg=233
+endif
+
+" ========================================================================== "
+" => Colors and Fonts
+" ========================================================================== "
+" Enable syntax highlighting
+syntax enable
+
+" Colorscheme (different for MacVim and terminal Vim)
+if has('gui_running')
+    set background=dark
+    colorscheme onedark
+else
+    colorscheme default
+endif
+
+" ========================================================================== "
+" => Back-up files
+" ========================================================================== "
+" Turn backup off
+set nobackup
+set nowb
+set noswapfile
+
+" ========================================================================== "
+" => Indentation
+" ========================================================================== "
+" Use spaces instead of tabs
+set expandtab
+
+" 1 tab == 4 spaces
+set tabstop=4     
+set shiftwidth=4
+set softtabstop=4
+" Use shift-Tab to write a tab in insert mode
+inoremap <S-Tab> <C-V><Tab> 
+
+" Set up word wrapping 
+set wrap
+set linebreak
+set nolist
+set textwidth=0
+set wrapmargin=0
+set formatoptions-=t
+
+" ========================================================================== "
+" => Moving around and new mappings
+" ========================================================================== "
+" Remap gj and gk to <Alt-j> and <Alt-k> for moving only one line in paragraphs
+"nnoremap ¶ gj
+"nnoremap § gk
+" Treat long lines as break lines
+nnoremap j gj
+nnoremap k gk
+
+" Press ,<space> to remove higlight
+nnoremap <leader><space> :nohlsearch<CR>
+
+" Move blocks of code selected in visual mode
+vnoremap < <gv 
+vnoremap > >gv 
+
+" Smart way to move between windows (:sv for horizontal splitting and :vs for vertical)
+"nnoremap <C-j> <C-W>j
+"nnoremap <C-k> <C-W>k
+"nnoremap <C-h> <C-W>h
+"nnoremap <C-l> <C-W>l
+
+" Remap VIM 0 to first non-blank character
+nnoremap 0 ^
+
+" Move a line of text one line up or down using ALT+[jk]
+nmap ¶ mz:m+<cr>`z
+nmap § mz:m-2<cr>`z
+vmap ¶ :m'>+<cr>`<my`>mzgv`yo`z
+vmap § :m'<-2<cr>`>my`<mzgv`yo`z
+
+" Create a new line above or below current line
+noremap <C-j> o<Esc>k
+noremap <C-k> O<Esc>j
+
+" Shortcuts to switch tabs
+if has("gui_macvim")
+  " Press Ctrl-Tab to switch between open tabs (like browser tabs) to 
+  " the right side. Ctrl-Shift-Tab goes the other way.
+  noremap <C-Tab> :tabnext<CR>
+  noremap <C-S-Tab> :tabprev<CR>
+
+  " Switch to specific tab numbers with Command-number
+  noremap <D-1> :tabn 1<CR>
+  noremap <D-2> :tabn 2<CR>
+  noremap <D-3> :tabn 3<CR>
+  noremap <D-4> :tabn 4<CR>
+  noremap <D-5> :tabn 5<CR>
+  noremap <D-6> :tabn 6<CR>
+  noremap <D-7> :tabn 7<CR>
+  noremap <D-8> :tabn 8<CR>
+  noremap <D-9> :tabn 9<CR>
+  " Command-0 goes to the last tab
+  noremap <D-0> :tablast<CR>
+endif
+
+" ========================================================================== "
+" => Spell checking
+" ========================================================================== "
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+" Shortcuts using <leader>: go to next/previous incorrect word, include it to the dictionary and show suggestions
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>sc z=
+
+" ========================================================================== "
+" => Options for installed plugins
+" ========================================================================== "
+" VIM-LATEX
+" --------------------------------------- "
+set grepprg=grep\ -nH\ $*
+"let g:tex_flavor='latex'
+"set iskeyword+=:
+"let g:Imap_FreezeImap=1 " disable all the macros
+"let g:Tex_TreatMacViewerAsUNIX = 1
+"let g:Tex_ExecuteUNIXViewerInForeground = 1
+"let g:Tex_FormatDependency_pdf = ’dvi,ps,pdf’
+let g:Tex_UseMakefile = 1 "if there is a MakeFile, use it
+let g:Tex_MultipleCompileFormats='pdf' "compile multiple times
+let g:Tex_ViewRule_ps = 'open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app'
+let g:Tex_ViewRule_dvi = 'open -a /Applications/DjView.app'
+"let g:Tex_ViewRule_pdf = 'open -a /Applications/Preview.app'
+let g:Tex_ViewRule_pdf = 'open -a /Applications/Skim.app'
+"let g:Tex_ViewRule_pdf = 'open -a /Applications/Adobe\ Acrobat\ Reader\ DC.app'
+let g:tex_comment_nospell = 1 "Do not check spell in comments
+let g:Tex_SmartKeyBS = 0 "Disable smart backspace
+let g:Tex_SmartKeyQuote = 0 "Disable smart double quotes
+
+"Only check spell in tex and text files
+autocmd FileType tex,text setlocal spell spelllang=en_gb 
+" --------------------------------------- "
+
+" Auto-pairs
+" --------------------------------------- "
+"uncomment this to disable it
+let g:AutoPairsShortcutToggle = '<leader><enter>' 
+let g:AutoPairsShortcutJump = '<C-L>'
+let g:AutoPairs={'(':')', '[':']', '{':'}', "'":"'", '"':'"', '$':'$'}
+" --------------------------------------- "
+
+" NERD tree
+" --------------------------------------- "
+" open NERDTree automatically when vim starts and there is no file specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+" Map to open NERDTree
+map <C-t> :NERDTreeToggle<CR>
+
+" Close it if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" --------------------------------------- "
+
+" YouCompleteMe
+" --------------------------------------- "
+"let g:clang_library_path = 
+"/Library/Developer/CommandLineTools/usr/lib
+let s:clang_library_path='/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib'
+if isdirectory(s:clang_library_path)
+    let g:clang_library_path=s:clang_library_path
+endif
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_auto_trigger = 1 "Put this equal to 0 if you want to turn off YCM
+let g:ycm_add_preview_to_completeopt = 0    "Remove preview window
+set completeopt-=preview                    "Remove preview window
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_min_num_of_chars_for_completion = 2
+let g:ycm_error_symbol = '>>'
+let g:ycm_warning_symbol = '>'
+let g:ycm_complete_in_comments = 0
+let g:ycm_complete_in_strings = 1
+let g:ycm_max_diagnostics_to_display = 10
+let g:ycm_key_list_select_completion = ['<TAB>', '<Down>']
+let g:ycm_key_detailed_diagnostics = '<leader>d'
+let g:ycm_key_invoke_completion = '<C-Space>'
+let g:ycm_path_to_python_interpreter = '/usr/local/bin/python2.7'
+set omnifunc=syntaxcomplete#Complete " necessary to make the previous line work
+
+nnoremap <C-D><C-F> :YcmCompleter GoToDefinition<CR>
+nnoremap <C-D><C-E> :YcmCompleter GoToDeclaration<CR>
+nnoremap <C-G><C-T> :YcmCompleter GetType<CR>
+nnoremap <C-G><C-P> :YcmCompleter GetParent<CR>
+nnoremap <C-G><C-D> :YcmCompleter GetDoc<CR>
+" --------------------------------------- "
+
+" Airline
+" --------------------------------------- "
+if has('gui_running')
+    let g:airline_powerline_fonts=1
+    set laststatus=2
+    "set guifont=Source\ Code\ Pro\ for\ Powerline
+    set guifont=Meslo\ LG\ S\ DZ\ for\ Powerline
+
+" Folding settings
+" --------------------------------------- "
+    set foldenable          "fold by default (set nofoldenable if you don't want it)
+    set foldmethod=syntax
+    "set foldmethod=manual
+    set foldnestmax=10      "deepest fold is 10 levels
+    set foldlevel=1         
+
+    "Remap za to SPACE
+    noremap <space> za      
+endif
+" --------------------------------------- "
+
+" Pymode
+" --------------------------------------- "
+let g:pymode = 1
+let g:pymode_warnings = 1
+let g:pymode_paths = ["/usr/local/Cellar/python/2.7.11"]
+let g:pymode_folding = 1
+
+
+let g:evalSelectionRubyDir = '~/.vim/bundle'
+
+" EasyMotion
+" --------------------------------------- "
+"let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+"" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+"" `s{char}{label}`
+"nmap s <Plug>(easymotion-overwin-f)
+"" or
+"" `s{char}{char}{label}`
+"" Need one more keystroke, but on average, it may be more comfortable.
+"nmap s <Plug>(easymotion-overwin-f2)
+
+"" Turn on case insensitive feature
+"let g:EasyMotion_smartcase = 1
+
+"" JK motions: Line motions
+"map <Leader>j <Plug>(easymotion-j)
+"map <Leader>k <Plug>(easymotion-k)
+
+" Fugitive
+" -------------------------------------- "
+nnoremap <leader>ga :Git add %:p<CR><CR>
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit -v -q<CR>
+nnoremap <leader>gt :Gcommit -v -q %:p<CR>
+nnoremap <leader>gd :Gdiff<CR>
+nnoremap <leader>ge :Gedit<CR>
+nnoremap <leader>gr :Gread<CR>
+nnoremap <leader>gw :Gwrite<CR><CR>
+nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <leader>gp :Ggrep<Space>
+nnoremap <leader>gm :Gmove<Space>
+nnoremap <leader>gb :Git branch<Space>
+nnoremap <leader>go :Git checkout<Space>
+nnoremap <leader>gps :Gpush<CR>
+nnoremap <leader>gps :Gpull<CR>
+xnoremap <space>p :diffput<CR>:diffupdate<CR>  
+xnoremap <space>g :diffget<CR>:diffupdate<CR>  
